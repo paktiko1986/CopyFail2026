@@ -126,21 +126,22 @@ payload = zlib.decompress(compressed)
 
 **Langkah-langkah**
 
-# 1. Buat user test
+1. Buat user test
 ```
 sudo useradd -m testuser
 sudo passwd testuser
 ```
-# 2. Login sebagai user biasa
+2. Login sebagai user biasa
 `su - testuser`
 
-# 3. Jalankan eksploitasi
+3. Jalankan eksploitasi
 `python3 copyfail.py`
 
 ### 🔍 Diagnostik
 **Cek Kernel Version**
 `uname -r`
-# Jika >= 6.10, kernel sudah di-patch
+
+Jika >= 6.10, kernel sudah di-patch
 **Cek Algoritma Tersedia**
 ```bash
 cat /proc/crypto | grep -A 10 "authenc"
